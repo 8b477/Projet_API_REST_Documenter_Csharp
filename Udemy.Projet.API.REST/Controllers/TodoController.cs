@@ -1,73 +1,65 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Udemy.Projet.API.REST.DataBase;
+using Udemy.Projet.API.REST.Interfaces;
 using Udemy.Projet.API.REST.Models;
 
 namespace Udemy.Projet.API.REST.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class TodoController : ControllerBase
     {
-
-
         #region Injection de dépendance de l'accès a ma base de données.
 
-        private readonly MyContextData? _context = null;
+        private readonly ITodoService? _context = null;
 
-        public TodoController(MyContextData context)
+        public TodoController(ITodoService? context)
         {
             _context = context;
         }
         #endregion
 
-        #region Méthode qui me retourne toute mes tâches
+        #region Méthode GetAllOfTodoList => qui me retourne toute mes tâches
         [HttpGet]
-        public async Task<ActionResult<List<TodoListmodel>>> Get()
+        public async Task<ActionResult<List<TodoListmodel>>> GetAllOfTodoList()
         {
+            var request = await _context.Get();
 
-            var result = await _context.TodoListmodels.ToListAsync();
-
-            if (result.Count == 0)
+            if (request == null)
                 return NoContent();
-            return Ok(result);
+
+            return Ok(request);
         }
         #endregion
 
-        #region Méthode AddOne => ajoute une nouvelle tâche
+        #region Méthode AddOneTodo => ajoute une nouvelle tâche
 
         [HttpPost]
-        public async Task<ActionResult> AddOne([FromBody] TodoListmodel model)
+        public async Task<ActionResult> AddOneTodo([FromBody] TodoListmodel model)
         {
-            if (model is not null)
-            {
-                _context?.Add(model);
 
-                await _context.SaveChangesAsync(); //Ne pas oublier de sauvegarder !!
-                                                   //si non le changement se fait bien m'est pas stocker en mémoire
+            var request = await _context.AddOneTodo(model);
 
-                return CreatedAtAction("AddOne", model); // Avec CreatedAtAction donnée en premier paramètre le nom de l'action,
-                                                         // enfaite le nom de ma méthode ici >AddOne<
-                                                         // Status code renvoyer => 201
-            }
-            return BadRequest();
+            if (request == null)
+                return BadRequest();
+
+            return CreatedAtAction("AddOne", model);
         }
         #endregion
 
-        #region Méthode GetByID => qui renvoie un item sur base de l'id donnée
-        [HttpGet("GetByID")]
-        public async Task<ActionResult<TodoListmodel>> GetByID(int id)
+        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée
+        [HttpGet("{id:int:range(5,25)}")] // ici je peut typé et aussi demander une contrainte, possible aussi avc REGEX
+        public async Task<ActionResult<TodoListmodel>> GetByIdOfTodoList(int id)
         {
-            var result = await _context.TodoListmodels.FindAsync(id);
+            var request = await _context.GetById(id);
 
-            if (result == null)
-                return BadRequest($"Pas d'item retrouver avec id => {id}");
+            if (request == null)
+                return BadRequest();
 
-            return Ok(result);
+            return Ok(request);
         }
         #endregion
 
-        #region Méthode UpdateTodoList => exécute une modification sur une tache déjà présente       
+        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente       
         
         #region ===> TO DO !!!!!!!
         //Rajouter le fait de récupéré directement l'id par le biais du premier paramètre rentrée
@@ -78,21 +70,18 @@ namespace Udemy.Projet.API.REST.Controllers
         #endregion
 
         [HttpPut]
-        public async Task<ActionResult> UpdateTodoList(TodoListmodel model, int id)
-        {
-                                                
-            if (model.id != id)
+        public async Task<ActionResult> UpdateOneTodo(TodoListmodel model, int id)
+        {         
+            var request = await _context.UpdateOneTodo(model, id);
+
+            if (request == null)
                 return BadRequest($"Impossible de metter à jour la ressource, le titre n'existe pas => {model.id}");
-
-            _context.Entry(model).State = EntityState.Modified;
-
-            _context.SaveChangesAsync();
-
+                        
             return Ok(model);
         }
         #endregion
 
-        #region Méthode DeletetaskOfTodoList => supprime une tâche existante sur base de son id.
+        #region Méthode DeleteOneTodo => supprime une tâche existante sur base de son id.
 
         #region ===> TO DO !!!!!!!
         //Géré le cas ou la ressource données pour supprimer n'existe pas. 
@@ -100,17 +89,13 @@ namespace Udemy.Projet.API.REST.Controllers
         #endregion
 
         [HttpDelete]
-        public async Task<ActionResult<TodoListmodel>> DeletetaskOfTodoList([FromQuery]int id)
+        public async Task<ActionResult<TodoListmodel>> DeleteOneTodo([FromQuery]int id)
         {
 
-            var result = await _context.FindAsync<TodoListmodel>(id);
+            var request = await _context.DeleteOneTodo(id);
 
-            if (result == null)
-                return BadRequest($"Le titre => {id}, ne correspond pas");
-
-            _context.Remove(result);
-
-            _context.SaveChangesAsync();
+            if (request == null)
+                return BadRequest();
 
             return NoContent();
 

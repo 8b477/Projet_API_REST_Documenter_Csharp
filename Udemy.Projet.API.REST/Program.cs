@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Udemy.Projet.API.REST.Configuration;
 using Udemy.Projet.API.REST.DataBase;
+using Udemy.Projet.API.REST.Interfaces;
+using Udemy.Projet.API.REST.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGenService();
 
-
+#region injection de dépendance
+builder.Services.AddTransient<ITodoService, TodoService>();
+#endregion
 #region BASE DE DONNEES
 
 //Ajout de ma base de données
