@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Udemy.Projet.API.REST.DataBase;
 using Udemy.Projet.API.REST.Models;
@@ -10,6 +9,7 @@ namespace Udemy.Projet.API.REST.Controllers
     [ApiController]
     public class TodoController : ControllerBase
     {
+
 
         #region Injection de dépendance de l'accès a ma base de données.
 
@@ -67,7 +67,7 @@ namespace Udemy.Projet.API.REST.Controllers
         }
         #endregion
 
-        #region Méthode UpdateTodoList => exécute une modification sur une tache déjà présente 
+        #region Méthode UpdateTodoList => exécute une modification sur une tache déjà présente       
         
         #region ===> TO DO !!!!!!!
         //Rajouter le fait de récupéré directement l'id par le biais du premier paramètre rentrée
@@ -113,6 +113,7 @@ namespace Udemy.Projet.API.REST.Controllers
             _context.SaveChangesAsync();
 
             return NoContent();
+
         } 
         #endregion
     }
