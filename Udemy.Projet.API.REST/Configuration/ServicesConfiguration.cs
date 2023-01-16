@@ -1,7 +1,9 @@
-﻿namespace Udemy.Projet.API.REST.Configuration
+﻿using System.Reflection;
+
+namespace Udemy.Projet.API.REST.Configuration
 {
     /// <summary>
-    /// Toute nos extension de service ici pour plus de lisibilité du côté du program.cs
+    /// Toute nos extension de service ici pour plus de lisibilité côté du program.cs
     /// *(* NE PAS OUBLIER DE RENDRE LA CLASSE STATIC *)*
     /// </summary>
 
@@ -30,6 +32,13 @@
                         Url = new Uri("https://www.google.be")
                     }
                 });
+                //Afficher la documentation => ///<summary> directement dans la page visuel de swagger
+                //lecture du fichier XML pour swagger
+                var xmlHelp = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //Ci dessus :
+                //=> On récupère ici le nom du fichier générée à l'assemblage du projet et on lui rajoute l'extension .xml
+
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlHelp));
             });
 
             return service;

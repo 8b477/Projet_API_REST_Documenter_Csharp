@@ -38,6 +38,7 @@ namespace Udemy.Projet.API.REST.Services
         #region Méthode GetByID => retourne une tâche sur base de son ID.
         public async Task<TodoListmodel?> GetById(int id)
         {
+            
             TodoListmodel? result = await _context.TodoListmodels
                                                   .AsNoTracking()
                                                   .Where(i => i.id == id)
@@ -61,8 +62,6 @@ namespace Udemy.Projet.API.REST.Services
                 return null;
 
             await _context.SaveChangesAsync();
-
-            _context.Entry(model).State = EntityState.Detached;
 
             return model;
         }

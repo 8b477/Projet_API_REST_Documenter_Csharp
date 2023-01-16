@@ -19,10 +19,22 @@ namespace Udemy.Projet.API.REST.Controllers
         #endregion
 
         #region Méthode GetAllOfTodoList => qui me retourne toute mes tâches
+        /// <summary>
+        /// Permet de récupérer toute la liste des tâches disponible
+        /// </summary>
+        /// <remarks>
+        /// Aide à l'utilisation :
+        /// <br></br>
+        /// (1) Appuyer sur le bouton => '<strong>try it out</strong>'
+        /// <br></br>
+        /// (2) Appuyer sur le bouton => '<strong>Execute</strong>'
+        /// </remarks>
+        /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
+        /// <returns>retourne une liste de tâches</returns>
         [HttpGet]
         public async Task<ActionResult<List<TodoListmodel>>> GetAllOfTodoList()
         {
-            var request = await _context.Get();
+            var request = await _context?.Get();
 
             if (request == null)
                 return NoContent();
@@ -32,9 +44,33 @@ namespace Udemy.Projet.API.REST.Controllers
         #endregion
 
         #region Méthode AddOneTodo => ajoute une nouvelle tâche
-
+        /// <summary>
+        /// Ajoute une nouvelle tâche
+        /// </summary>
+        /// <remarks>
+        /// <h2>Aide à l'utilisation :</h2>
+        /// <br></br>
+        /// <p>(1) Appuyer sur le bouton => '<strong>try it out</strong>'</p>
+        /// <br></br>
+        /// <p>(2) Insérer une nouvelle tâche en renseignant chaque champ à sa valeur , comme ci dessous</p>
+        /// <br></br>
+        ///<pre>
+        ///{<br></br>
+        ///"id": <em>"ma valeur"</em>,<br></br>
+        ///"title": "<em>ma valeur</em>",<br></br>
+        ///"content": "<em>ma valeur</em>"<br></br>
+        ///}
+        /// </pre>
+        /// <br></br>
+        /// <p>(3) Appuyer sur le bouton => '<strong>Execute</strong>'</p>
+        /// </remarks>
+        /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
+        /// <response code= "201">(Code: 201) La requête de création à résussis !</response>
+        /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non compatible voire manquante !</response>
+        /// <param name="model"></param>
+        /// <returns>Ne retourne rien</returns>
         [HttpPost]
-        public async Task<ActionResult> AddOneTodo([FromBody] TodoListmodel model)
+        public async Task<ActionResult> AddOneTodo(TodoListmodel model)
         {
 
             var request = await _context.AddOneTodo(model);
@@ -42,12 +78,12 @@ namespace Udemy.Projet.API.REST.Controllers
             if (request == null)
                 return BadRequest();
 
-            return CreatedAtAction("AddOne", model);
+            return CreatedAtAction("AddOneTodo", model);
         }
         #endregion
 
         #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée
-        [HttpGet("{id:int:range(5,25)}")] // ici je peut typé et aussi demander une contrainte, possible aussi avc REGEX
+        [HttpGet("{id:int:range(1,5)}")] // ici je peut typé et aussi demander une contrainte, possible aussi avc REGEX
         public async Task<ActionResult<TodoListmodel>> GetByIdOfTodoList(int id)
         {
             var request = await _context.GetById(id);
@@ -60,7 +96,7 @@ namespace Udemy.Projet.API.REST.Controllers
         #endregion
 
         #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente       
-        
+
         #region ===> TO DO !!!!!!!
         //Rajouter le fait de récupéré directement l'id par le biais du premier paramètre rentrée
         //et de l'insérée directement sur le model que l'on veut modifier,
@@ -69,8 +105,8 @@ namespace Udemy.Projet.API.REST.Controllers
         //***************************************************************************************** 
         #endregion
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateOneTodo(TodoListmodel model, int id)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> UpdateOneTodo([FromQuery] int id,TodoListmodel model)
         {         
             var request = await _context.UpdateOneTodo(model, id);
 
@@ -99,7 +135,18 @@ namespace Udemy.Projet.API.REST.Controllers
 
             return NoContent();
 
-        } 
+        }
         #endregion
+
+        [HttpGet("ExempleJeDonneUnCheminPerso")]
+        public async Task<ActionResult<List<TodoListmodel>>> GetAll()
+        {
+            var request = await _context?.Get();
+
+            if (request == null)
+                return NoContent();
+
+            return Ok(request);
+        }
     }
 }
