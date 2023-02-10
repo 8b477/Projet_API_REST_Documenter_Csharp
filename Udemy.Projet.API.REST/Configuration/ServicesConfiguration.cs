@@ -17,7 +17,7 @@ namespace Udemy.Projet.API.REST.Configuration
                 options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Version = "v1",// => crée un bug swagger ne trouve plus la page !!
-                    Title = "Mon super titre de merde",
+                    Title = "Organise ce que tu veux faire !",
                     Description = "API pour faciliter sa gestion de l'emploie du temp, via une TODO liste.",
 
                     Contact = new Microsoft.OpenApi.Models.OpenApiContact
