@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Udemy.Projet.API.REST", "Udemy.Projet.API.REST\Udemy.Projet.API.REST.csproj", "{4C52A7E9-4BDF-4B43-B685-5024FBF2E3CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Projet.API.REST.Swagger", "Udemy.Projet.API.REST\Projet.API.REST.Swagger.csproj", "{4C52A7E9-4BDF-4B43-B685-5024FBF2E3CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

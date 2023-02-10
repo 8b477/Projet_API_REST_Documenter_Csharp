@@ -43,7 +43,7 @@ namespace Udemy.Projet.API.REST.Controllers
         }
         #endregion
 
-        #region Méthode AddOneTodo => ajoute une nouvelle tâche
+        #region Méthode AddOneTodo => Ajoute une nouvelle tâche
         /// <summary>
         /// Ajoute une nouvelle tâche
         /// </summary>
@@ -138,6 +138,7 @@ namespace Udemy.Projet.API.REST.Controllers
         }
         #endregion
 
+        #region Démo route perso
         [HttpGet("ExempleJeDonneUnCheminPerso")]
         public async Task<ActionResult<List<TodoListmodel>>> GetAll()
         {
@@ -148,5 +149,6 @@ namespace Udemy.Projet.API.REST.Controllers
 
             return Ok(request);
         }
+        #endregion
     }
 }
