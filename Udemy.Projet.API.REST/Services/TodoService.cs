@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
+using Udemy.Projet.API.REST.Controllers;
 using Udemy.Projet.API.REST.DataBase;
 using Udemy.Projet.API.REST.Interfaces;
 using Udemy.Projet.API.REST.Models;
@@ -10,10 +12,12 @@ namespace Udemy.Projet.API.REST.Services
 
         #region Injection de dépendance
         private readonly MyContextData? _context = null;
+        private readonly ILogger<TodoController> _logger;
 
-        public TodoService(MyContextData context)
+        public TodoService(MyContextData context, ILogger<TodoController> logger)
         {
             _context = context;
+            _logger = logger;
         }
         #endregion
 
@@ -38,16 +42,21 @@ namespace Udemy.Projet.API.REST.Services
         #region Méthode GetByID => retourne une tâche sur base de son ID.
         public async Task<TodoListmodel?> GetById(int id)
         {
-            
             TodoListmodel? result = await _context.TodoListmodels
                                                   .AsNoTracking()
                                                   .Where(i => i.id == id)
                                                   .FirstOrDefaultAsync();
 
             if (result == null)
+            {
+                _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+
                 return null;
+            }
 
             _context.Entry(result).State = EntityState.Detached;
+
+            _logger.LogInformation("La requête 'GetById' est un succès");
 
             return result;
         }
@@ -59,9 +68,16 @@ namespace Udemy.Projet.API.REST.Services
             var result = _context.Add(model);
 
             if (result == null)
+            {
+                _logger.LogWarning("Le model retournée n'est pas complet !");
+
                 return null;
+            }
+
 
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("La requête 'AddOneTodo' est un succès");
 
             return model;
         }
@@ -76,16 +92,26 @@ namespace Udemy.Projet.API.REST.Services
                                         .FirstOrDefaultAsync();
 
             if (model.id != id)
+            {
+                _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+
                 return null;
+            }
 
             if (result == null)
+            {
+                _logger.LogWarning("Le model retournée n'est pas complet !");
+
                 return null;
+            }
 
             _context.Entry(model).State = EntityState.Modified;
 
             await _context.SaveChangesAsync();
 
             _context.Entry(model).State = EntityState.Detached;
+
+            _logger.LogInformation("La requête 'UpdateOneTodo' est un succès");
 
             return result;
         }
@@ -97,7 +123,11 @@ namespace Udemy.Projet.API.REST.Services
             var result = await _context.TodoListmodels.FindAsync(id);
 
             if (result == null)
+            {
+                _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+
                 return null;
+            }
 
             _context.Entry(result).State = EntityState.Deleted;
 
@@ -106,6 +136,8 @@ namespace Udemy.Projet.API.REST.Services
             await _context.SaveChangesAsync();
 
             _context.Entry(result).State = EntityState.Detached;
+
+            _logger.LogInformation("La requête 'DeleteOneTodo' est un succès");
 
             return result;
         } 

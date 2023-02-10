@@ -11,7 +11,7 @@ namespace Udemy.Projet.API.REST.Controllers
         #region Injection de dépendance de l'accès a ma base de données.
 
         private readonly ITodoService? _context = null;
-
+        
         public TodoController(ITodoService? context)
         {
             _context = context;
@@ -114,14 +114,6 @@ namespace Udemy.Projet.API.REST.Controllers
         #endregion
 
         #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente       
-
-        #region ===> TO DO !!!!!!!
-        //Rajouter le fait de récupéré directement l'id par le biais du premier paramètre rentrée
-        //et de l'insérée directement sur le model que l'on veut modifier,
-        //*****************************************************************************************
-        // ** Utiliser un modèle sans id en prop et le mapé sur l'original avant de le retourner **
-        //***************************************************************************************** 
-        #endregion
         /// <summary>
         /// Permet de modifier une tâche déjà existante.
         /// </summary>
@@ -176,12 +168,10 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <br></br>
         /// <p>(3) Appuyer sur le bouton => '<strong>Execute</strong>'</p>
         /// </remarks>
-        /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <response code= "204">(Code: 204) La requête s'est exécuter correctement, le contenu est vide.</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
         /// <param name="id"></param>
         /// <returns>Ne retourne rien.</returns>
-        [ProducesResponseType(200)]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [HttpDelete("{id:int}")]
