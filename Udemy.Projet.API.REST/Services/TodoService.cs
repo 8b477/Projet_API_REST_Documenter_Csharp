@@ -24,11 +24,11 @@ namespace Udemy.Projet.API.REST.Services
         #region Méthode de ITodoService implémentée
 
         #region Méthode Get => renvoie toute la liste des tâches.
-        public async Task<List<TodoListmodel>?> Get()
+        public async Task<List<TodoListmodel>?> Get(CancellationToken cancel)
         {
             List<TodoListmodel?> result = await _context.TodoListmodels
                                                         .AsNoTracking() //Permet de forcer l'arrêt du tracking si non bug si la ressouce est rappeler par une autre méthode
-                                                        .ToListAsync();
+                                                        .ToListAsync(cancel);
 
             if (result == null)
                 return null;
@@ -40,12 +40,12 @@ namespace Udemy.Projet.API.REST.Services
         #endregion
 
         #region Méthode GetByID => retourne une tâche sur base de son ID.
-        public async Task<TodoListmodel?> GetById(int id)
+        public async Task<TodoListmodel?> GetById(int id, CancellationToken cancel)
         {
             TodoListmodel? result = await _context.TodoListmodels
                                                   .AsNoTracking()
                                                   .Where(i => i.id == id)
-                                                  .FirstOrDefaultAsync();
+                                                  .FirstOrDefaultAsync(cancel);
 
             if (result == null)
             {
@@ -63,7 +63,7 @@ namespace Udemy.Projet.API.REST.Services
         #endregion
 
         #region Méthode AddOneTodo => rajoute une tâche a ma base de donnée TodoList.
-        public async Task<TodoListmodel?> AddOneTodo(TodoListmodel model)
+        public async Task<TodoListmodel?> AddOneTodo(TodoListmodel model, CancellationToken cancel)
         {
             var result = _context.Add(model);
 
@@ -75,7 +75,7 @@ namespace Udemy.Projet.API.REST.Services
             }
 
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancel);
 
             _logger.LogInformation("La requête 'AddOneTodo' est un succès");
 
@@ -84,12 +84,12 @@ namespace Udemy.Projet.API.REST.Services
         #endregion
 
         #region Méthode UpdateOneTodo => retourne une tâche modifier sur base d'une existante retrouver par son id.
-        public async Task<TodoListmodel?> UpdateOneTodo(TodoListmodel model, int id)
+        public async Task<TodoListmodel?> UpdateOneTodo(TodoListmodel model, int id, CancellationToken cancel)
         {
             var result = await _context.TodoListmodels
                                         .AsNoTracking()
                                         .Where(i => i.id == id)
-                                        .FirstOrDefaultAsync();
+                                        .FirstOrDefaultAsync(cancel);
 
             if (model.id != id)
             {
@@ -118,9 +118,9 @@ namespace Udemy.Projet.API.REST.Services
         #endregion
 
         #region Méthode DeleteOneTodo => supprime une tâche sur base de son id.
-        public async Task<TodoListmodel?> DeleteOneTodo(int id)
+        public async Task<TodoListmodel?> DeleteOneTodo(int id, CancellationToken cancel)
         {
-            var result = await _context.TodoListmodels.FindAsync(id);
+            var result = await _context.TodoListmodels.FindAsync(id, cancel);
 
             if (result == null)
             {

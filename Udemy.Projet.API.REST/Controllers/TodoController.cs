@@ -10,11 +10,13 @@ namespace Udemy.Projet.API.REST.Controllers
     {
         #region Injection de dépendance de l'accès a ma base de données.
 
-        private readonly ITodoService? _context = null;
-        
-        public TodoController(ITodoService? context)
+        private readonly ITodoService? _service = null;
+        private readonly ILogger<TodoController> _logger;
+
+        public TodoController(ITodoService? context, ILogger<TodoController> logger)
         {
-            _context = context;
+            _service = context;
+            _logger = logger;
         }
         #endregion
 
@@ -33,9 +35,9 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <returns>retourne une liste de tâches</returns>
         [ProducesResponseType(200)]
         [HttpGet]
-        public async Task<ActionResult<List<TodoListmodel>>> GetAllOfTodoList()
+        public async Task<ActionResult<List<TodoListmodel>>> GetAllOfTodoList(CancellationToken cancel)
         {
-            var request = await _context?.Get();
+            List<TodoListmodel>? request = await _service?.Get(cancel);
 
             if (request == null)
                 return NoContent();
@@ -69,15 +71,16 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <response code= "201">(Code: 201) la requête de création à réussi !</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
         /// <param name="model"></param>
+        /// <param name="cancel"></param>
         /// <returns>Ne retourne rien.</returns>
         [ProducesResponseType(200)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [HttpPost]
-        public async Task<ActionResult> AddOneTodo(TodoListmodel model)
+        public async Task<ActionResult> AddOneTodo(TodoListmodel model, CancellationToken cancel)
         {
 
-            var request = await _context.AddOneTodo(model);
+            TodoListmodel? request = await _service?.AddOneTodo(model, cancel);
 
             if (request == null)
                 return BadRequest();
@@ -100,11 +103,12 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
         /// <param name="id"></param>
+        /// <param name="cancel"></param>
         /// <returns>Une tâche lié à l'id renseigner par l'utilisateur.</returns>
         [HttpGet("{id:int}")] // ici je peut typé et aussi demander une contrainte, possible aussi avc REGEX
-        public async Task<ActionResult<TodoListmodel>> GetByIdOfTodoList(int id)
+        public async Task<ActionResult<TodoListmodel>> GetByIdOfTodoList(int id, CancellationToken cancel)
         {
-            var request = await _context.GetById(id);
+            TodoListmodel? request = await _service?.GetById(id, cancel);
 
             if (request == null)
                 return BadRequest();
@@ -140,17 +144,18 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
         /// <param name="id"></param>
         /// <param name="model"></param>
+        /// <param name="cancel"></param>
         /// <returns>Une tâche sur base de son id et permets de la modifier.</returns>
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateOneTodo(int id, TodoListmodel model)
-        {         
-            var request = await _context.UpdateOneTodo(model, id);
+        public async Task<ActionResult> UpdateOneTodo(int id, TodoListmodel model, CancellationToken cancel)
+        {
+            TodoListmodel? request = await _service?.UpdateOneTodo(model, id, cancel);
 
             if (request == null)
                 return BadRequest($"Impossible de mettre à jour la ressource, l'id : {model.id} n'existe pas !");
-                        
+
             return Ok(model);
         }
         #endregion
@@ -171,14 +176,15 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <response code= "204">(Code: 204) La requête s'est exécuter correctement, le contenu est vide.</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
         /// <param name="id"></param>
+        /// <param name="cancel"></param>
         /// <returns>Ne retourne rien.</returns>
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<TodoListmodel>> DeleteOneTodo(int id)
+        public async Task<ActionResult<TodoListmodel>> DeleteOneTodo(int id, CancellationToken cancel)
         {
 
-            var request = await _context.DeleteOneTodo(id);
+            TodoListmodel? request = await _service?.DeleteOneTodo(id, cancel);
 
             if (request == null)
                 return BadRequest();
@@ -205,12 +211,18 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <returns>Fait exactement le même que la première méthode GetAllOfTodoList(), retourne une liste de tâches</returns>
         [HttpGet("ExempleJeDonneUnCheminPerso")]
-        public async Task<ActionResult<List<TodoListmodel>>> Get_All()
+        public async Task<ActionResult<List<TodoListmodel>>> Get_All(CancellationToken cancel)
         {
-            var request = await _context?.Get();
+            //Test du CancellationToken.
+            _logger.LogWarning("Début de l'attente");
+            await Task.Delay(10000, cancel); //Ajout d'un délai pour le test.
+
+            List<TodoListmodel>? request = await _service?.Get(cancel);
 
             if (request == null)
                 return NoContent();
+
+            _logger.LogWarning("Fin de l'attente");
 
             return Ok(request);
         }
@@ -232,13 +244,14 @@ namespace Udemy.Projet.API.REST.Controllers
         /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
         /// <param name="id"></param>
+        /// <param name="cancel"></param>
         /// <returns>Une tâche lié à l'id renseigner par l'utilisateur.</returns>
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [HttpGet("{id:int:range(1,5)}")] // => Ici je peut typé et aussi demander une contrainte, possible aussi avc REGEX
-        public async Task<ActionResult<TodoListmodel>> Test_Condition(int id)
+        public async Task<ActionResult<TodoListmodel>> Test_Condition(int id, CancellationToken cancel)
         {
-            var request = await _context.GetById(id);
+            TodoListmodel? request = await _service?.GetById(id, cancel);
 
             if (request == null)
                 return BadRequest();
