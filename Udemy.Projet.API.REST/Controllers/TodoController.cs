@@ -25,11 +25,11 @@ namespace Udemy.Projet.API.REST.Controllers
         /// Permet de récupérer toute la liste des tâches disponible
         /// </summary>
         /// <remarks>
-        /// <h2>Aide à l'utilisation :</h2>
+        /// <h2><u>Aide à l'utilisation :</u></h2>
         /// <br></br>
-        /// (1) Appuyer sur le bouton => '<strong>try it out</strong>'
+        /// (1) Appuyer sur le bouton => '<strong>try it out</strong>'.
         /// <br></br>
-        /// (2) Appuyer sur le bouton => '<strong>Execute</strong>'
+        /// (2) Appuyer sur le bouton => '<strong>Execute</strong>'.
         /// </remarks>
         /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <returns>retourne une liste de tâches</returns>
@@ -51,21 +51,25 @@ namespace Udemy.Projet.API.REST.Controllers
         /// Ajoute une nouvelle tâche.
         /// </summary>
         /// <remarks>
-        /// <h2>Aide à l'utilisation :</h2>
+        /// <h2><u>Aide à l'utilisation :</u></h2>
         /// <br></br>
-        /// <p>(1) Appuyer sur le bouton => '<strong>try it out</strong>'</p>
+        /// (1) Appuyer sur le bouton => '<strong>try it out</strong>'.
         /// <br></br>
-        /// <p>(2) Insérer une nouvelle tâche en renseignant chaque champ à sa <em>valeur</em> , comme ci dessous</p>
+        /// (2) Insérer une nouvelle tâche en renseignant chaque champ à sa <em>valeur</em> , comme ci dessous.
         /// <br></br>
-        ///<pre>
-        ///{<br></br>
-        ///"id": <em>"ma valeur"</em>,<br></br>
-        ///"title": "<em>ma valeur</em>",<br></br>
-        ///"content": "<em>ma valeur</em>"<br></br>
+        ///<example>
+        ///<code>
+        ///{
+        ///<br></br>
+        ///  "id": <em>"valeur"</em>,<br></br>
+        ///  "title": "<em>valeur</em>",<br></br>
+        ///  "content": "<em>valeur</em>"
+        ///<br></br>
         ///}
-        /// </pre>
+        ///</code>
+        ///</example>
         /// <br></br>
-        /// <p>(3) Appuyer sur le bouton => '<strong>Execute</strong>'</p>
+        /// (3) Appuyer sur le bouton => '<strong>Execute</strong>'.
         /// </remarks>
         /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <response code= "201">(Code: 201) la requête de création à réussi !</response>
@@ -94,11 +98,11 @@ namespace Udemy.Projet.API.REST.Controllers
         /// Retourne une tâche lié à l'id fourni.
         /// </summary>
         /// <remarks>
-        /// <h2>Aide à l'utilisation :</h2>
+        /// <h2><u>Aide à l'utilisation :</u></h2>
         /// <br></br>
-        /// <p>(1) Appuyer sur le bouton => '<strong>try it out</strong>'</p>
-        /// <p>(2) Insérée un identifiant / id</p>
-        /// <p>(3) Appuyer sur le bouton => '<strong>Execute</strong>'</p>
+        /// (1) Appuyer sur le bouton => '<strong>try it out</strong>'.
+        /// (2) Insérée un identifiant / id.
+        /// (3) Appuyer sur le bouton => '<strong>Execute</strong>'.
         /// </remarks>
         /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
@@ -122,23 +126,26 @@ namespace Udemy.Projet.API.REST.Controllers
         /// Permet de modifier une tâche déjà existante.
         /// </summary>
         /// <remarks>
-        /// <h2>Aide à l'utilisation :</h2>
+        /// <h2><u>Aide à l'utilisation :</u></h2>
         /// <br></br>
-        /// <p>(1) Appuyer sur le bouton => '<strong>try it out</strong>'</p>
+        /// (1) Appuyer sur le bouton => '<strong>try it out</strong>'.
         /// <br></br>
-        /// <p>(2) Entrez un identifiant / id </p>
+        /// (2) Entrez un identifiant / id.
         /// <br></br>
-        /// <p>(2) Insérer une nouvelle <em>valeur</em> au champ disponible, comme ci dessous</p>
+        /// (2) Insérer une nouvelle <em>valeur</em> au champ disponible, comme ci dessous.
         /// <br></br>
-        /// <pre>
-        ///{<br></br>
-        ///"id": <em>"ma valeur"</em>,<br></br>
-        ///"title": "<em>ma valeur</em>",<br></br>
-        ///"content": "<em>ma valeur</em>"<br></br>
+        ///<example>
+        ///<code>
+        ///{
+        ///<br></br>
+        ///"id": <em>"valeur"</em>,<br></br>
+        ///"title": "<em>valeur</em>",<br></br>
+        ///"content": "<em>valeur</em>"<br></br>
         ///}
-        /// </pre>
+        ///</code>
+        ///</example>
         /// <br></br>
-        /// <p>(3) Appuyer sur le bouton => '<strong>Execute</strong>'</p>
+        /// (3) Appuyer sur le bouton => '<strong>Execute</strong>'.
         /// </remarks>
         /// <response code= "200">(Code: 200) La requête s'est exécuter correctement !</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
@@ -165,13 +172,13 @@ namespace Udemy.Projet.API.REST.Controllers
         /// Permet de supprimer une tâche existante sur base de son identifiant / id.
         /// </summary>
         /// <remarks>
-        /// <h2>Aide à l'utilisation :</h2>
+        /// <h2><u>Aide à l'utilisation :</u></h2>
         /// <br></br>
-        /// <p>(1) Appuyer sur le bouton => '<strong>try it out</strong>'</p>
+        /// (1) Appuyer sur le bouton => '<strong>try it out</strong>'.
         /// <br></br>
-        /// <p>(2) Entrez un identifiant / id </p>
+        /// (2) Entrez un identifiant / id.
         /// <br></br>
-        /// <p>(3) Appuyer sur le bouton => '<strong>Execute</strong>'</p>
+        /// (3) Appuyer sur le bouton => '<strong>Execute</strong>'.
         /// </remarks>
         /// <response code= "204">(Code: 204) La requête s'est exécuter correctement, le contenu est vide.</response>
         /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>

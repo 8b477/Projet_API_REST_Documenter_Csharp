@@ -1,5 +1,9 @@
 ﻿using System.Reflection;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+
 namespace Udemy.Projet.API.REST.Configuration
 {
     /// <summary>
@@ -44,5 +48,36 @@ namespace Udemy.Projet.API.REST.Configuration
             return service;
         }
 
+        public static IServiceCollection AddAuthentificationService(this IServiceCollection service)
+        {
+
+            service.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+            {
+                options.Authority = "https://dev-qq7s2j4r0zzrukm8.us.auth0.com";
+                options.Audience = "https://testAuth";
+            });
+
+            return service;
+        }
+
+        public static IServiceCollection AddControllerService(this IServiceCollection service)
+        {
+
+            service.AddControllers(options =>
+            {
+                var policies = new AuthorizationPolicyBuilder()
+                                    .RequireAuthenticatedUser()
+                                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policies));
+
+            });
+
+            return service;
+        }
     }
 }

@@ -9,10 +9,15 @@ using Udemy.Projet.API.REST.Interfaces;
 using Udemy.Projet.API.REST.Services; 
 #endregion
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddEndpointsApiExplorer();
+
+#region Extensions de mes Services voire dossier => Configuration, ServicesConfiguration. 
+builder.Services.AddSwaggerGenService(); // => Ajout de la doc Swagger
+builder.Services.AddAuthentificationService(); // => Authentification service JWTBearer 
+builder.Services.AddControllerService(); // => Ajout d'une demande d'authorisation sur tout les controllers
+#endregion
 
 #region Configuration du logger => SERILOG
 var configuration = new ConfigurationBuilder()
@@ -24,27 +29,20 @@ Log.Logger = new LoggerConfiguration()
                 .Configuration(configuration)
                 .CreateLogger();
 
-builder.Host.UseSerilog(); 
+builder.Host.UseSerilog();
 #endregion
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGenService(); // => extension dispo dans /Configuration/ServicesConfiguration
+#region BASE DE DONNEES
+//Ajout de ma base de données
+builder.Services.AddDbContext<MyContextData>(options => options.UseInMemoryDatabase("DataBase"));
+#endregion
 
 #region injection de dépendance
 builder.Services.AddTransient<ITodoService, TodoService>();
 #endregion
 
-#region BASE DE DONNEES
-//Ajout de ma base de données
-builder.Services.AddDbContext<MyContextData>(options => options.UseInMemoryDatabase("DataBase")); 
-#endregion
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -52,7 +50,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
