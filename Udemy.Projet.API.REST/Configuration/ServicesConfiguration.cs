@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
+using Projet.API.REST.Swagger.Filters;
+
 namespace Udemy.Projet.API.REST.Configuration
 {
     /// <summary>
@@ -67,15 +69,30 @@ namespace Udemy.Projet.API.REST.Configuration
 
         public static IServiceCollection AddControllerService(this IServiceCollection service)
         {
+#region Ici on ajoute à chaques controller l'authentification.
 
             service.AddControllers(options =>
-            {
-                var policies = new AuthorizationPolicyBuilder()
-                                    .RequireAuthenticatedUser()
-                                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policies));
+    {
+        var policies = new AuthorizationPolicyBuilder()
+                            .RequireAuthenticatedUser()
+                            .Build();
 
-            });
+        options.Filters.Add(new AuthorizeFilter(policies));
+
+#endregion
+
+#region Ici on ajoute nos filtre perso.
+
+        // Impossible d'ajouter mon LogginActionFilter comme ceci pour le propager dans tout mon controller
+        // car il manque notre dépendance => logger !
+        //options.Filters.Add(new LogginActionFilter());
+
+        // Faire comme ceci quand ont à une dépendance dans notre classe.
+        options.Filters.Add<LogginActionFilter>();  
+
+#endregion
+
+    });
 
             return service;
         }
