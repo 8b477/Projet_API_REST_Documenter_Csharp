@@ -74,7 +74,6 @@ namespace Udemy.Projet.API.REST.Services
                 return null;
             }
 
-
             await _context.SaveChangesAsync(cancel);
 
             _logger.LogInformation("La requête 'AddOneTodo' est un succès");

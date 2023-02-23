@@ -193,14 +193,14 @@ namespace Udemy.Projet.API.REST.Controllers
         /// (3) Appuyer sur le bouton => '<strong>Execute</strong>'.
         /// </remarks>
         /// <response code= "204">(Code: 204) La requête s'est exécuter correctement, le contenu est vide.</response>
-        /// <response code= "400">(Code: 400) La requête à échoué, valeur d'entrée non référencer dans la base de données !</response>
         /// <response code= "401">(Code: 401) Vous n'avez pas les authorisations pour éffectuer la requête !</response>
+        /// <response code= "404">(Code: 404) La ressource demandée n'existe pas !</response>
         /// <param name="id"></param>
         /// <param name="cancel"></param>
         /// <returns>Ne retourne rien.</returns>
         [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<TodoListmodel>> DeleteOneTodo(int id, CancellationToken cancel)
         {
@@ -208,7 +208,7 @@ namespace Udemy.Projet.API.REST.Controllers
             TodoListmodel? request = await _service?.DeleteOneTodo(id, cancel);
 
             if (request == null)
-                return BadRequest();
+                return NotFound();
 
             return NoContent();
 

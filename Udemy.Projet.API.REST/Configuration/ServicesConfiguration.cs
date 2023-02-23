@@ -69,7 +69,7 @@ namespace Udemy.Projet.API.REST.Configuration
 
         public static IServiceCollection AddControllerService(this IServiceCollection service)
         {
-#region Ici on ajoute à chaques controller l'authentification.
+#region Ici on ajoute à chaque controllers l'authentification.
 
             service.AddControllers(options =>
     {
@@ -81,7 +81,7 @@ namespace Udemy.Projet.API.REST.Configuration
 
 #endregion
 
-#region Ici on ajoute nos filtre perso.
+#region Ici on ajoute nos filtre perso sur chaques controllers.
 
         // Impossible d'ajouter mon LogginActionFilter comme ceci pour le propager dans tout mon controller
         // car il manque notre dépendance => logger !
@@ -89,6 +89,10 @@ namespace Udemy.Projet.API.REST.Configuration
 
         // Faire comme ceci quand ont à une dépendance dans notre classe.
         options.Filters.Add<LogginActionFilter>();  
+
+        options.Filters.Add<GlobalExceptionFilter>();  
+
+        options.Filters.Add(new FormattingResultFilter());
 
 #endregion
 

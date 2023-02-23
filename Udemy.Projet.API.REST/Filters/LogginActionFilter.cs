@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 // Permets de contrôler ce qui est passer en paramètre de notre requête,
-// si les données sont celles attendues ou pas, avant d'exécuter la méthode
+// si les données sont celles attendues ou pas, avant d'exécuter la méthode (conforme au modèle attendu).
 namespace Projet.API.REST.Swagger.Filters
 {
     public class LogginActionFilter : IActionFilter
