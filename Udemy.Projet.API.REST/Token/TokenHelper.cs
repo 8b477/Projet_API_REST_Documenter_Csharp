@@ -3,11 +3,11 @@ using System.Text;
 
 using Microsoft.IdentityModel.Tokens;
 
-namespace Projet.API.REST.Swagger
+namespace Projet.API.REST.Swagger.Token
 {
-/// <summary>
-///   
-/// </summary>
+    /// <summary>
+    ///   
+    /// </summary>
     public class TokenHelper
     {
         private const string SECRET_KEY = "TQvgjeABMPOwCycOqah5EQu5yyVjpmVG";

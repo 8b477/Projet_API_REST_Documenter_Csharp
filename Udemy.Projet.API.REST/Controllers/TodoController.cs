@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using JWT.Token;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Projet.API.REST.Swagger.Filters;
 
@@ -7,9 +9,13 @@ using Udemy.Projet.API.REST.Models;
 
 namespace Udemy.Projet.API.REST.Controllers
 {
+    /// <summary>
+    /// Controller / CRUD => TODO
+    /// </summary>
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    //[DisableFilter] => Permet d'activer le filtre perso qui se situe dans le dossier < Filter >.
+    //[AllowAnonymous]
+    //[DisableFilter] => Permet d'activer le filtre perso qui se situe dans le dossier < Filters >.
     public class TodoController : ControllerBase
     {
         #region Injection de dépendance de l'accès a ma base de données.
@@ -17,12 +23,32 @@ namespace Udemy.Projet.API.REST.Controllers
         private readonly ITodoService? _service = null;
         private readonly ILogger<TodoController> _logger;
 
+        /// <summary>
+        /// Injection de dépendance des différents services consommée.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="logger"></param>
         public TodoController(ITodoService? context, ILogger<TodoController> logger)
         {
             _service = context;
             _logger = logger;
         }
         #endregion
+        /// <summary>
+        /// Méthode qui génère un token.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        
+        public IActionResult GetToken(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                return new ObjectResult(GenerateTokenClass.GenerateToken(name));
+            }
+            return BadRequest("Veuillez entrez quelques chose dans le champ 'name' !");
+        }
 
         #region Méthode GetAllOfTodoList => qui me retourne toute mes tâches
         /// <summary>

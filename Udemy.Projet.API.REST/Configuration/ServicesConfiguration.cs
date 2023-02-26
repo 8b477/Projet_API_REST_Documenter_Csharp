@@ -3,8 +3,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.OpenApi.Models;
 
 using Projet.API.REST.Swagger.Filters;
+using Projet.API.REST.Swagger.Token;
 
 namespace Udemy.Projet.API.REST.Configuration
 {
@@ -15,6 +17,11 @@ namespace Udemy.Projet.API.REST.Configuration
 
     public static class ServicesConfiguration
     {
+        /// <summary>
+        /// Extension => Configuration Swagger / En tête visuel / XML Doc.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <returns></returns>
         public static IServiceCollection AddSwaggerGenService(this IServiceCollection service)
         {
 
@@ -45,11 +52,36 @@ namespace Udemy.Projet.API.REST.Configuration
                 //=> On récupère ici le nom du fichier générée à l'assemblage du projet et on lui rajoute l'extension .xml
 
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlHelp));
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    Description = "Utiliser 'Authorization : Bearer {token}'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type =ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                 new string []{}
+                }
+                });
             });
-
-            return service;
+        return service;
         }
-
+        /// <summary>
+        /// Extension => Configuration JwtBearer
+        /// </summary>
+        /// <param name="service"></param>
+        /// <returns></returns>
         public static IServiceCollection AddAuthentificationService(this IServiceCollection service)
         {
 
@@ -58,47 +90,59 @@ namespace Udemy.Projet.API.REST.Configuration
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(options =>
+            .AddJwtBearer(options =>
             {
-                options.Authority = "https://dev-qq7s2j4r0zzrukm8.us.auth0.com";
-                options.Audience = "https://testAuth";
+                options.TokenValidationParameters = new()
+                {
+                    IssuerSigningKey = TokenHelper.SIGNING_KEY,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.FromMinutes(5)
+                };
             });
+            #region Authentification via Aut0.com
+            //    .AddJwtBearer(options =>
+            //{
+            //    options.Authority = "https://dev-qq7s2j4r0zzrukm8.us.auth0.com";
+            //    options.Audience = "https://testAuth";
+            //}); 
+            #endregion
 
-            return service;
+         return service;
         }
-
+        /// <summary>
+        /// Extension controllers sur chacun d'entre eux :
+        /// => Ajout de l'authentification sur chacun.
+        /// => Ajout des filtres.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <returns></returns>
         public static IServiceCollection AddControllerService(this IServiceCollection service)
         {
-#region Ici on ajoute à chaque controllers l'authentification.
-
+            //L'authentification.
             service.AddControllers(options =>
-    {
-        var policies = new AuthorizationPolicyBuilder()
+            {
+                var policies = new AuthorizationPolicyBuilder()
                             .RequireAuthenticatedUser()
                             .Build();
 
-        options.Filters.Add(new AuthorizeFilter(policies));
+                options.Filters.Add(new AuthorizeFilter(policies));
 
-#endregion
+                // Ajout de nos filtre.
+                // -------------------
+                // ** Impossible d'ajouter mon LogginActionFilter comme ceci pour le propager dans tout mon controller **
+                // ** car il manque notre dépendance => logger ! **
 
-#region Ici on ajoute nos filtre perso sur chaques controllers.
+                // => options.Filters.Add(new LogginActionFilter());
 
-        // Impossible d'ajouter mon LogginActionFilter comme ceci pour le propager dans tout mon controller
-        // car il manque notre dépendance => logger !
-        //options.Filters.Add(new LogginActionFilter());
+                // Faire comme ceci quand ont à une dépendance dans notre classe.
+                options.Filters.Add<LogginActionFilter>();  
 
-        // Faire comme ceci quand ont à une dépendance dans notre classe.
-        options.Filters.Add<LogginActionFilter>();  
+                options.Filters.Add<GlobalExceptionFilter>();  
 
-        options.Filters.Add<GlobalExceptionFilter>();  
-
-        options.Filters.Add(new FormattingResultFilter());
-
-#endregion
-
-    });
-
-            return service;
+                options.Filters.Add(new FormattingResultFilter());
+            });
+        return service;
         }
     }
 }
