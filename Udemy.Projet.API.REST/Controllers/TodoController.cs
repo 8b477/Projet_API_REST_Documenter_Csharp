@@ -50,7 +50,7 @@ namespace Udemy.Projet.API.REST.Controllers
             return BadRequest("Veuillez entrez quelques chose dans le champ 'name' !");
         }
 
-        #region Méthode GetAllOfTodoList => qui me retourne toute mes tâches
+        #region Méthode GetAllOfTodoList => Liste toute mes tâches.
         /// <summary>
         /// Permet de récupérer toute la liste des tâches disponible
         /// </summary>
@@ -76,7 +76,7 @@ namespace Udemy.Projet.API.REST.Controllers
         }
         #endregion
 
-        #region Méthode AddOneTodo => Ajoute une nouvelle tâche
+        #region Méthode AddOneTodo => Ajoute une nouvelle tâche.
         /// <summary>
         /// Ajoute une nouvelle tâche.
         /// </summary>
@@ -125,7 +125,7 @@ namespace Udemy.Projet.API.REST.Controllers
         }
         #endregion
 
-        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée
+        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée.
         /// <summary>
         /// Retourne une tâche lié à l'id fourni.
         /// </summary>
@@ -157,7 +157,7 @@ namespace Udemy.Projet.API.REST.Controllers
         }
         #endregion
 
-        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente       
+        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente.      
         /// <summary>
         /// Permet de modifier une tâche déjà existante.
         /// </summary>
