@@ -1,4 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data.Common;
+
+using Hellang.Middleware.ProblemDetails;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+using Projet.API.REST.Swagger.Execeptions;
 
 using Udemy.Projet.API.REST.Controllers;
 using Udemy.Projet.API.REST.DataBase;
@@ -7,6 +14,9 @@ using Udemy.Projet.API.REST.Models;
 
 namespace Udemy.Projet.API.REST.Services
 {
+    /// <summary>
+    /// Class services controller.
+    /// </summary>
     public class TodoService : ITodoService
     {
 
@@ -21,126 +31,238 @@ namespace Udemy.Projet.API.REST.Services
         }
         #endregion
 
+        /// <summary>
+        /// Check la validité (mini)
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        private bool CleanUpModel(TodoListmodel model)
+        {
+            // id, title, content
+
+            if (model == null)
+                return false;
+
+            if (String.IsNullOrWhiteSpace(model.Title) || String.IsNullOrWhiteSpace(model.Content))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         #region Méthode de ITodoService implémentée
 
-        #region Méthode Get => renvoie toute la liste des tâches.
+        /// <summary>
+        /// Méthode Get => renvoie toute la liste des tâches.
+        /// </summary>
+        /// <param name="cancel"></param>
+        /// <returns></returns>
         public async Task<List<TodoListmodel>?> Get(CancellationToken cancel)
         {
-            List<TodoListmodel?> result = await _context.TodoListmodels
-                                                        .AsNoTracking() //Permet de forcer l'arrêt du tracking si non bug si la ressouce est rappeler par une autre méthode
-                                                        .ToListAsync(cancel);
+            try
+            {
+                List<TodoListmodel?> result = await _context
+                                                .TodoListmodels.AsNoTracking()
+                                                .ToListAsync(cancel);
 
-            if (result == null)
-                return null;
+                // Vérifie si la liste est vide et renvoie null si c'est le cas
+                if (!result.Any())
+                    return null;
 
-            //_context.Entry(result).State = EntityState.Detached; => Attention ici cela créée une erreur !
-
-            return result;
+                //_context.Entry(result).State = EntityState.Detached; => Attention ici cela crée une erreur 500!
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Une erreur s'est produite lors de la récupération des données.");
+                throw;
+            }
         }
-        #endregion
 
-        #region Méthode GetByID => retourne une tâche sur base de son ID.
+        /// <summary>
+        /// Retourne une tâche sur base de son ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancel"></param>
+        /// <returns></returns>
         public async Task<TodoListmodel?> GetById(int id, CancellationToken cancel)
         {
-            TodoListmodel? result = await _context.TodoListmodels
-                                                  .AsNoTracking()
-                                                  .Where(i => i.id == id)
-                                                  .FirstOrDefaultAsync(cancel);
-
-            if (result == null)
+            try
             {
-                _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
 
-                return null;
+                TodoListmodel? result = await _context.TodoListmodels
+                                                      .AsNoTracking()
+                                                      .Where(i => i.Id == id)
+                                                      .FirstOrDefaultAsync(cancel);
+
+                if (result == null)
+                {
+                    _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+
+                    return null;
+                }
+
+                _context.Entry(result).State = EntityState.Detached;
+
+
+                return result;
             }
-
-            _context.Entry(result).State = EntityState.Detached;
-
-            _logger.LogInformation("La requête 'GetById' est un succès");
-
-            return result;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
         }
-        #endregion
 
-        #region Méthode AddOneTodo => rajoute une tâche a ma base de donnée TodoList.
+
+        /// <summary>
+        /// Méthode AddOneTodo => rajoute une tâche a ma base de donnée TodoList.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="cancel"></param>
+        /// <returns></returns>
         public async Task<TodoListmodel?> AddOneTodo(TodoListmodel model, CancellationToken cancel)
         {
-            var result = _context.Add(model);
 
-            if (result == null)
+            if (!CleanUpModel(model))
             {
+                
                 _logger.LogWarning("Le model retournée n'est pas complet !");
 
-                return null;
+                var problemDetails = new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Le modèle est incomplet ou incorrect.",
+                    Detail = "Le modèle que vous avez envoyé est invalide."
+                };
+                throw new ProblemDetailsException(problemDetails);
             }
 
-            await _context.SaveChangesAsync(cancel);
+            try
+            {
 
-            _logger.LogInformation("La requête 'AddOneTodo' est un succès");
+                var result = _context.Add(model);
 
-            return model;
+                await _context.SaveChangesAsync(cancel);
+
+                _logger.LogInformation("La requête 'AddOneTodo' est un succès");
+
+                return model;
+
+            }
+            catch (DbException ex)
+            {
+                _logger.LogError("Une erreur de base de données s'est produite lors de l'ajout d'un Todo : {Error}", ex.Message);
+                throw new DatabaseException("Une erreur de base de données s'est produite lors de l'ajout d'un Todo.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Une erreur s'est produite lors de l'ajout d'un Todo.");
+                throw new ServiceException("Une erreur s'est produite lors de l'ajout d'un Todo.", ex);
+            }
+            return null;
         }
-        #endregion
 
-        #region Méthode UpdateOneTodo => retourne une tâche modifier sur base d'une existante retrouver par son id.
+
+        /// <summary>
+        /// Modifie une tâche enregistrée via son id.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="id"></param>
+        /// <param name="cancel"></param>
+        /// <returns></returns>
         public async Task<TodoListmodel?> UpdateOneTodo(TodoListmodel model, int id, CancellationToken cancel)
         {
-            var result = await _context.TodoListmodels
-                                        .AsNoTracking()
-                                        .Where(i => i.id == id)
-                                        .FirstOrDefaultAsync(cancel);
 
-            if (model.id != id)
+            try
             {
-                _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+                var result = await _context.TodoListmodels
+                                            .AsNoTracking()
+                                            .Where(i => i.Id == id)
+                                            .FirstOrDefaultAsync(cancel);
 
-                return null;
+                if (model.Id != id)
+                {
+                    _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+
+                    return null;
+                }
+
+                if (result == null)
+                {
+                    _logger.LogWarning("Le model retournée n'est pas complet !");
+
+                    return null;
+                }
+
+                _context.Entry(model).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+
+                _context.Entry(model).State = EntityState.Detached;
+
+                _logger.LogInformation("La requête 'UpdateOneTodo' est un succès");
+
+                return result;
+
             }
-
-            if (result == null)
+            catch (DbException ex)
             {
-                _logger.LogWarning("Le model retournée n'est pas complet !");
-
-                return null;
+                _logger.LogError("Une erreur de base de données s'est produite lors de l'ajout d'un Todo : {Error}", ex.Message);
+                throw new DatabaseException("Une erreur de base de données s'est produite lors de l'ajout d'un Todo.", ex);
             }
-
-            _context.Entry(model).State = EntityState.Modified;
-
-            await _context.SaveChangesAsync();
-
-            _context.Entry(model).State = EntityState.Detached;
-
-            _logger.LogInformation("La requête 'UpdateOneTodo' est un succès");
-
-            return result;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Une erreur s'est produite lors de l'ajout d'un Todo.");
+                throw new ServiceException("Une erreur s'est produite lors de l'ajout d'un Todo.", ex);
+            }
         }
-        #endregion
 
-        #region Méthode DeleteOneTodo => supprime une tâche sur base de son id.
+        /// <summary>
+        /// Supprime une tâche enregistrée sur base de son id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancel"></param>
+        /// <returns></returns>
         public async Task<TodoListmodel?> DeleteOneTodo(int id, CancellationToken cancel)
         {
-            var result = await _context.TodoListmodels.FindAsync(id, cancel);
-
-            if (result == null)
+            try
             {
-                _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+                var result = await _context.TodoListmodels.FindAsync(id, cancel);
 
-                return null;
+                if (result == null)
+                {
+                    _logger.LogError($"La tâche rechercher avec l'id: ({id}) n'existe pas !");
+
+                    return null;
+                }
+
+                _context.Entry(result).State = EntityState.Deleted;
+
+                _context.TodoListmodels.Remove(result);
+
+                await _context.SaveChangesAsync();
+
+                _context.Entry(result).State = EntityState.Detached;
+
+                _logger.LogInformation("La requête 'DeleteOneTodo' est un succès");
+
+                return result;
+        }
+            catch (DbException ex)
+            {
+                _logger.LogError("Une erreur de base de données s'est produite lors de l'ajout d'un Todo : {Error}", ex.Message);
+                throw new DatabaseException("Une erreur de base de données s'est produite lors de l'ajout d'un Todo.", ex);
             }
-
-            _context.Entry(result).State = EntityState.Deleted;
-
-            _context.TodoListmodels.Remove(result);
-
-            await _context.SaveChangesAsync();
-
-            _context.Entry(result).State = EntityState.Detached;
-
-            _logger.LogInformation("La requête 'DeleteOneTodo' est un succès");
-
-            return result;
-        } 
-        #endregion
-        #endregion
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Une erreur s'est produite lors de l'ajout d'un Todo.");
+                throw new ServiceException("Une erreur s'est produite lors de l'ajout d'un Todo.", ex);
+            }
+        }
     }
 }
+    #endregion
+
+

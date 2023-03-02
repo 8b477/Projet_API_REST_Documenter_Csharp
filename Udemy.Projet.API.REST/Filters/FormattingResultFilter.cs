@@ -19,7 +19,7 @@ namespace Projet.API.REST.Swagger.Filters
         public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             
-            if (!(context.Result is EmptyResult))
+            if (context.Result is not EmptyResult)
             {
                 var item = context.Result as ObjectResult;
 
@@ -27,11 +27,11 @@ namespace Projet.API.REST.Swagger.Filters
                 {
                     StatutCode = int.TryParse(item?.StatusCode.ToString(), out int result) ? result : 500,
                     IsSucced = (item?.StatusCode == 200 || item?.StatusCode == 201) ? true : false,
-                    Data = $"Bearer {item?.Value}"
+                    Data = (item != null) ? item.Value : null
                 });
             }
 
-            var resultContext = await next();
+            var _ = await next();
         }
     }
 }

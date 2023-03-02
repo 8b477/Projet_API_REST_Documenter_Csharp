@@ -42,10 +42,10 @@ namespace Udemy.Projet.API.REST.Configuration
                     License = new Microsoft.OpenApi.Models.OpenApiLicense
                     {
                         Name = "Nom de la license",
-                        Url = new Uri("https://www.google.be")
+                        Url = new Uri("https://www.google.be") // URI bidon pour le test.
                     }
                 });
-                //Afficher la documentation => ///<summary> directement dans la page visuel de swagger
+                //Afficher la documentation => /// <summary> directement dans la page visuel de swagger
                 //lecture du fichier XML pour swagger
                 var xmlHelp = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 //Ci dessus :

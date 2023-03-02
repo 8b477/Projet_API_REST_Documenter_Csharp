@@ -2,16 +2,25 @@
 
 namespace Udemy.Projet.API.REST.Models
 {
+    /// <summary>
+    /// Représente la table TodoList
+    /// </summary>
     public class TodoListmodel
     {
-
-        #region Properties
+        /// <summary>
+       /// Identifiant
+       /// </summary>
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
 
+        /// <summary>
+        /// Titre
+        /// </summary>
         public string Title { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Contenu
+        /// </summary>
         public string Content { get; set; } = string.Empty;
-        #endregion
     }
 }

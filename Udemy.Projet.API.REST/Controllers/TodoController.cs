@@ -10,7 +10,7 @@ using Udemy.Projet.API.REST.Models;
 namespace Udemy.Projet.API.REST.Controllers
 {
     /// <summary>
-    /// Controller / CRUD => TODO
+    /// Controller / CRUD => TODOLIST
     /// </summary>
     [Route("api/[controller]/[Action]")]
     [ApiController]
@@ -18,7 +18,6 @@ namespace Udemy.Projet.API.REST.Controllers
     //[DisableFilter] => Permet d'activer le filtre perso qui se situe dans le dossier < Filters >.
     public class TodoController : ControllerBase
     {
-        #region Injection de dépendance de l'accès a ma base de données.
 
         private readonly ITodoService? _service = null;
         private readonly ILogger<TodoController> _logger;
@@ -33,26 +32,35 @@ namespace Udemy.Projet.API.REST.Controllers
             _service = context;
             _logger = logger;
         }
-        #endregion
+
+
         /// <summary>
         /// Méthode qui génère un token.
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
         
-        public IActionResult GetToken(string name)
+        public IActionResult GetToken()
         {
-            if (!string.IsNullOrEmpty(name))
-            {
-                return new ObjectResult(GenerateTokenClass.GenerateToken(name));
-            }
-            return BadRequest("Veuillez entrez quelques chose dans le champ 'name' !");
+                return new ObjectResult(GenerateTokenClass.GenerateToken());
         }
 
-        #region Méthode GetAllOfTodoList => qui me retourne toute mes tâches
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
+        #region Méthode GetAllOfTodoList => Liste toute mes tâches.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode GetAllOfTodoList => Liste toute mes tâches.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode GetAllOfTodoList => Liste toute mes tâches.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
         /// <summary>
-        /// Permet de récupérer toute la liste des tâches disponible
+        /// Liste toute mes tâches.
         /// </summary>
         /// <remarks>
         /// <h2><u>Aide à l'utilisation :</u></h2>
@@ -74,9 +82,20 @@ namespace Udemy.Projet.API.REST.Controllers
 
             return Ok(request);
         }
-        #endregion
 
-        #region Méthode AddOneTodo => Ajoute une nouvelle tâche
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
+        #region Méthode AddOneTodo => Ajoute une nouvelle tâche.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode AddOneTodo => Ajoute une nouvelle tâche.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode AddOneTodo => Ajoute une nouvelle tâche.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
         /// <summary>
         /// Ajoute une nouvelle tâche.
         /// </summary>
@@ -123,11 +142,22 @@ namespace Udemy.Projet.API.REST.Controllers
 
             return CreatedAtAction("AddOneTodo", model);
         }
-        #endregion
 
-        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
+        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
         /// <summary>
-        /// Retourne une tâche lié à l'id fourni.
+        /// Retourne un item sur base de l'id donnée.
         /// </summary>
         /// <remarks>
         /// <h2><u>Aide à l'utilisation :</u></h2>
@@ -155,11 +185,22 @@ namespace Udemy.Projet.API.REST.Controllers
 
             return Ok(request);
         }
-        #endregion
 
-        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente       
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+    
+=======
+        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente.      
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente.      
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
+=======
+        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente.      
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
         /// <summary>
-        /// Permet de modifier une tâche déjà existante.
+        /// Modifie une tâche enregistrée.
         /// </summary>
         /// <remarks>
         /// <h2><u>Aide à l'utilisation :</u></h2>
@@ -199,15 +240,14 @@ namespace Udemy.Projet.API.REST.Controllers
             TodoListmodel? request = await _service?.UpdateOneTodo(model, id, cancel);
 
             if (request == null)
-                return BadRequest($"Impossible de mettre à jour la ressource, l'id : {model.id} n'existe pas !");
+                return BadRequest($"Impossible de mettre à jour la ressource, l'id : {model.Id} n'existe pas !");
 
             return Ok(model);
         }
-        #endregion
 
-        #region Méthode DeleteOneTodo => supprime une tâche existante sur base de son id.
+
         /// <summary>
-        /// Permet de supprimer une tâche existante sur base de son identifiant / id.
+        /// Supprimer une tâche enregistrée via id.
         /// </summary>
         /// <remarks>
         /// <h2><u>Aide à l'utilisation :</u></h2>
@@ -239,8 +279,13 @@ namespace Udemy.Projet.API.REST.Controllers
             return NoContent();
 
         }
-        #endregion
 
+
+
+
+
+
+        //*******************************************************
         #region Exemple en plus..
         #region Démo route perso. => [HttpGet("ExempleJeDonneUnCheminPerso")]
         /// <summary>

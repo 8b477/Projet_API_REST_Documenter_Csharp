@@ -12,18 +12,14 @@ namespace JWT.Token
     public static class GenerateTokenClass
     {
         /// <summary>
-        /// Génère un Token sur base d'un paramètre de type string en entrée.
+        /// Génère un Token.
         /// </summary>
-        /// <param name="name"></param>
         /// <returns></returns>
-        public static string GenerateToken(string name)
+        public static string GenerateToken()
         {
             var token = new JwtSecurityToken
             (
-                claims: new Claim[]
-            {
-                new Claim(ClaimTypes.Name, name)
-            },
+            claims: Array.Empty<Claim>(),
             notBefore: new DateTimeOffset(DateTime.Now).DateTime,
             expires: new DateTimeOffset(DateTime.Now.AddMinutes(60)).DateTime,
             signingCredentials: new SigningCredentials(TokenHelper.SIGNING_KEY, SecurityAlgorithms.HmacSha256)
