@@ -49,7 +49,11 @@ namespace Udemy.Projet.API.REST.Controllers
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+        #region Méthode GetAllOfTodoList => Liste toute mes tâches.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
 =======
         #region Méthode GetAllOfTodoList => Liste toute mes tâches.
 >>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
@@ -86,7 +90,11 @@ namespace Udemy.Projet.API.REST.Controllers
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+        #region Méthode AddOneTodo => Ajoute une nouvelle tâche.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
 =======
         #region Méthode AddOneTodo => Ajoute une nouvelle tâche.
 >>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
@@ -146,7 +154,11 @@ namespace Udemy.Projet.API.REST.Controllers
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+        #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée.
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
 =======
         #region Méthode GetByIdOfTodoList => qui renvoie un item sur base de l'id donnée.
 >>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
@@ -189,7 +201,11 @@ namespace Udemy.Projet.API.REST.Controllers
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     
+=======
+        #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente.      
+>>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
 =======
         #region Méthode UpdateOneTodo => exécute une modification sur une tache déjà présente.      
 >>>>>>> b30e692c1a3c79f90821b815c32eb3990f3ed20e
